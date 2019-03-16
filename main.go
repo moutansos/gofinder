@@ -12,7 +12,7 @@ import (
 func main() {
 	fmt.Println("Starting Go Finder bot...")
 
-	config := ReadConfig("config.json")
+	config := readConfig("config.json")
 
 	discord, err := discordgo.New("Bot " + config.BotKey)
 	if err != nil {
@@ -33,7 +33,19 @@ func main() {
 	}
 	defer discord.Close()
 
-	<-make(chan struct{})
+	listings := make(chan listing)
+
+	go runFinder(listings)
+
+	for listing := range listings {
+		content := fmt.Sprintf("%s: %s", listing.Title, listing.Url)
+		_, err = discord.ChannelMessageSend(config.ChannelId, content)
+		if err != nil {
+			log.Println("Error sending listing: ", err)
+		}
+	}
+
+	// <-make(chan struct{})
 }
 
 func initBot(discord *discordgo.Session, ready *discordgo.Ready) {

@@ -8,9 +8,10 @@ import (
 
 type Config struct {
 	BotKey string `json:"botKey"`
+	ChannelId string `json:"channelId"`
 }
 
-func ReadConfig(file string) Config {
+func readConfig(file string) Config {
 	buff, err := ioutil.ReadFile(file)
 	if err != nil {
 		log.Fatal("Error reading config file: ", err)
