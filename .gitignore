@@ -12,3 +12,4 @@
 *.out
 config.json
 data.db
+data

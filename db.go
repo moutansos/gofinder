@@ -57,6 +57,7 @@ func (db *SqliteDatabase) Init() {
 	if err != nil {
 		log.Fatal("Error connecting to db: ", err)
 	}
+	defer database.Close()
 
 	database.Exec(`CREATE TABLE IF NOT EXISTS "Listings" (
 		"Url"	TEXT NOT NULL UNIQUE,
@@ -70,6 +71,7 @@ func (db *SqliteDatabase) AddRecord(record ListingRecord) {
 	if err != nil {
 		log.Fatal("Error connecting to db: ", err)
 	}
+	defer database.Close()
 
 	_, err = database.Exec(`INSERT INTO "Listings" (Url, Title) VALUES (?, ?)`, record.Url, record.Title)
 	if err != nil {
@@ -82,6 +84,8 @@ func (db *SqliteDatabase) rowExists(query string, args ...interface{}) bool {
 	if err != nil {
 		log.Fatal("Error connecting to db: ", err)
 	}
+	defer database.Close()
+
 	var exists bool
 	query = fmt.Sprintf("SELECT exists (%s)", query)
 	err = database.QueryRow(query, args...).Scan(&exists)
