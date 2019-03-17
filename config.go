@@ -7,8 +7,9 @@ import (
 )
 
 type Config struct {
-	BotKey string `json:"botKey"`
-	ChannelId string `json:"channelId"`
+	BotKey           string `json:"botKey"`
+	ChannelId        string `json:"channelId"`
+	ConnectionString string `json:"connectionString"`
 }
 
 func readConfig(file string) Config {

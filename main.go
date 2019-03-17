@@ -33,9 +33,12 @@ func main() {
 	}
 	defer discord.Close()
 
-	listings := make(chan listing)
+	db := NewSqliteDatabase(config.ConnectionString)
+	db.Init()
 
-	go runFinder(listings)
+	listings := make(chan ListingRecord)
+
+	go runFinder(listings, db)
 
 	for listing := range listings {
 		content := fmt.Sprintf("%s: %s", listing.Title, listing.Url)
@@ -49,7 +52,7 @@ func main() {
 }
 
 func initBot(discord *discordgo.Session, ready *discordgo.Ready) {
-	err := discord.UpdateStatus(0, "I'm alive!")
+	err := discord.UpdateStatus(0, " The Housing Market!")
 	if err != nil {
 		log.Fatal("Error setting my status: ", err)
 	}
@@ -70,6 +73,6 @@ func command(discord *discordgo.Session, message *discordgo.MessageCreate) {
 		return //This is either another bot or its this bot
 	}
 
-	log.Printf("From: %s Message: %s", message.Author.Username, message.Content)
-	discord.ChannelMessageSend(message.ChannelID, message.Content)
+	//log.Printf("From: %s Message: %s", message.Author.Username, message.Content)
+	//discord.ChannelMessageSend(message.ChannelID, message.Content)
 }
